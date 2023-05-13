@@ -1,10 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
 
 export interface test {
   message: string;
 }
+
+export const t = new InjectionToken<test>('test');
 
 @Injectable({
   providedIn: 'root',
