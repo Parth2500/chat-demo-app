@@ -13,7 +13,11 @@
             placeholder="john.doe@mail.com"
             formControlName="email"
           />
-          <mat-error><p>{{password.errors}}</p></mat-error>
+          <mat-error>
+            <p *ngIf="email.hasError('required')">
+              Password is required field.
+            </p>
+          </mat-error>
         </mat-form-field>
         <mat-form-field>
           <mat-label>Username</mat-label>
@@ -23,12 +27,40 @@
             placeholder="johnDoe"
             formControlName="username"
           />
-          <mat-error>error</mat-error>
+          <mat-error>
+            <p *ngIf="username.hasError('required')">
+              Password is required field.
+            </p>
+          </mat-error>
         </mat-form-field>
         <mat-form-field>
           <mat-label>Password</mat-label>
           <input type="password" matInput formControlName="password" />
-          <mat-error>error</mat-error>
+          <mat-error>
+            <p *ngIf="password.hasError('required')">
+              Password is required field.
+            </p>
+            <p
+              *ngIf="
+                password.hasError('minlength') || password.hasError('maxlength')
+              "
+            >
+              Length must be between 8 to 20 characters.
+            </p>
+            <p *ngIf="password.hasError('passwordStrength')">
+              Password must have a capital later, a number and a special
+              character.
+            </p>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Confirm Password</mat-label>
+          <input type="password" matInput formControlName="confirmPassword" />
+          <mat-error>
+            <p *ngIf="!confirmPassword.hasError('match')">
+              Password does not match.
+            </p>
+          </mat-error>
         </mat-form-field>
         <button
           mat-flat-button

@@ -1,12 +1,20 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import {
   AbstractControl,
+  FormBuilder,
   FormControl,
   FormGroup,
   ValidationErrors,
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
+import { tap } from 'rxjs';
+import { PasswordStrengthValidator } from '../../helpers/validators/password-strength.validator';
+import {
+  ISignOnService,
+  SignOnToken,
+} from '../../services/iservices/sign-on.service.interface';
 
 @Component({
   selector: 'app-register',
@@ -14,25 +22,49 @@ import {
   styleUrls: ['./register.component.scss'],
 })
 export class RegisterComponent implements OnInit {
-  registrationForm: FormGroup = new FormGroup({
-    email: new FormControl(null, [Validators.required, Validators.email]),
-    username: new FormControl(null, [Validators.required]),
-    password: new FormControl(null, [
-      Validators.required,
-      Validators.minLength(8),
-      Validators.maxLength(20),
-      this.PasswordStrengthValidator(),
-    ]),
+  formBuilder: FormBuilder = new FormBuilder();
+  registrationForm: FormGroup = this.formBuilder.group({
+    email: [null, [Validators.required, Validators.email], []],
+    username: [null, [Validators.required]],
+    password: [
+      null,
+      [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.maxLength(20),
+        PasswordStrengthValidator(),
+      ],
+    ],
+    confirmPassword: [
+      null,
+      [Validators.required, this.confirmPasswordValidator()],
+    ],
   });
 
-  constructor() {}
+  constructor(
+    @Inject(SignOnToken) private signOnService: ISignOnService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     throw new Error('Method not implemented.');
   }
 
   register() {
-    console.log('registered!');
+    if (this.registrationForm.valid) {
+      this.signOnService
+        .createUser({
+          email: this.email.value,
+          username: this.username.value,
+          password: this.password.value,
+        })
+        .pipe(
+          tap(() => {
+            this.router.navigate(['/public/login']);
+          })
+        )
+        .subscribe();
+    }
   }
 
   get email(): FormControl {
@@ -47,11 +79,15 @@ export class RegisterComponent implements OnInit {
     return this.getFormControl('password');
   }
 
+  get confirmPassword(): FormControl {
+    return this.getFormControl('confirmPassword');
+  }
+
   getFormControl(controlName: string): FormControl {
     return this.registrationForm.get(controlName) as FormControl;
   }
 
-  PasswordStrengthValidator(): ValidatorFn {
+  confirmPasswordValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
 
@@ -59,15 +95,7 @@ export class RegisterComponent implements OnInit {
         return null;
       }
 
-      const hasUpperCase = /[A-Z]+/.test(value);
-      const hasLowerCase = /[a-z]+/.test(value);
-      const hasNumeric = /[0-9]+/.test(value);
-      const hasSpecialCharacters = /[#?!@$%^&*-]+/.test(value);
-
-      const passwordValid =
-        hasUpperCase && hasLowerCase && hasNumeric && hasSpecialCharacters;
-
-      return !passwordValid ? { passwordStrength: true } : null;
+      return value !== this.password.value ? { match: false } : null;
     };
   }
 }

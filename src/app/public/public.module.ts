@@ -12,6 +12,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
+import { SignOnService } from './services/sign-on.service';
+import { SignOnToken } from './services/iservices/sign-on.service.interface';
 
 const MaterialImports = [
   MatCardModule,
@@ -31,5 +33,6 @@ const MaterialImports = [
     ReactiveFormsModule,
     ...MaterialImports,
   ],
+  providers: [{ provide: SignOnToken, useClass: SignOnService}],
 })
 export class PublicModule {}
