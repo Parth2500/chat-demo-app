@@ -10,7 +10,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterModule } from '@angular/router';
 
+import { JwtModule } from '@auth0/angular-jwt';
+
 const MaterialImports = [MatSnackBarModule];
+const getAccessToken = () => {
+  return localStorage.getItem('access_token');
+};
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,6 +25,12 @@ const MaterialImports = [MatSnackBarModule];
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: getAccessToken,
+        allowedDomains: ['chat-api:3000'],
+      },
+    }),
     ...MaterialImports,
   ],
   providers: [],
