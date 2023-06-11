@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
+import { CustomSocketService } from './custom-socket.service';
 import { IChatService } from './iservices/chat.service.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService implements IChatService {
-  constructor(private socket: Socket) {}
+  constructor(private socket: CustomSocketService) {}
 
   sendMessage(message: string) {}
 
