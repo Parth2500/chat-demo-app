@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { test, TestService } from './services/test/test.service';
 
@@ -8,14 +7,10 @@ import { test, TestService } from './services/test/test.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'chat-app';
 
   testData$: Observable<test> = this.test.getTestData();
 
   constructor(private test: TestService) {}
-
-  ngOnInit(): void {
-    throw new Error('Method not implemented.');
-  }
 }

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { catchError, Observable, tap } from 'rxjs';
 import { LoginResponse } from 'src/app/models/login-response.interface';
 import { IUser } from 'src/app/models/user.interface';
@@ -16,7 +17,11 @@ export class SignOnService implements ISignOnService {
     verticalPosition: 'top',
   };
 
-  constructor(private httpService: HttpClient, private snackBar: MatSnackBar) {}
+  constructor(
+    private httpService: HttpClient,
+    private snackBar: MatSnackBar,
+    private jwtService: JwtHelperService
+  ) {}
 
   createUser(user: IUser): Observable<IUser> {
     return this.httpService.post<IUser>('api/users', user).pipe(
@@ -38,6 +43,10 @@ export class SignOnService implements ISignOnService {
     );
   }
 
+  findByUsername(username: string): Observable<IUser[]> {
+    return this.httpService.get<IUser[]>(`api/users/username/${username}`);
+  }
+
   loginUser(user: IUser): Observable<LoginResponse> {
     return this.httpService.post<LoginResponse>('api/users/login', user).pipe(
       tap((response: LoginResponse) => {
@@ -57,5 +66,9 @@ export class SignOnService implements ISignOnService {
 
   logoutUser() {
     localStorage.clear();
+  }
+
+  getLoggedInUser(): IUser {
+    return this.jwtService.decodeToken().user;
   }
 }
