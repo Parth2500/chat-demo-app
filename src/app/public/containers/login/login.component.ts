@@ -39,8 +39,8 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.signOnService
         .loginUser({
-          email: this.loginForm.get('email')?.value,
-          password: this.loginForm.get('password')?.value,
+          email: this.email.value,
+          password: this.password.value,
         })
         .pipe(
           tap(() => {
