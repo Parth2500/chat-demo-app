@@ -20,6 +20,7 @@ import { ChatMessageComponent } from './components/chat-message/chat-message.com
 import { ChatRoomComponent } from './components/chat-room/chat-room.component';
 import { CreateRoomComponent } from './components/create-room/create-room.component';
 import { SelectUsersComponent } from './components/select-users/select-users.component';
+import { PublicModule } from '../public/public.module';
 
 const MaterialImports = [
   MatListModule,
@@ -46,6 +47,7 @@ const MaterialImports = [
     ReactiveFormsModule,
     ...MaterialImports,
     CommonModule,
+    PublicModule
   ],
   providers: [{ provide: ChatToken, useClass: ChatService }],
 })

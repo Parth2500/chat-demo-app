@@ -1,5 +1,7 @@
 <mat-form-field>
-  <input matInput placeholder="Search User by Username" [matAutocomplete]="auto" [formControl]="searchUsername">
+  <form [formGroup]="form">
+    <input matInput placeholder="Search User by Username" [matAutocomplete]="auto" [formControl]="searchUsername">
+  </form>
   <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
     (optionSelected)="setSelectedUser($event.option.value)">
     <ng-container>

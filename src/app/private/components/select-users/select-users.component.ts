@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { IUser } from 'src/app/models/user.interface';
 import {
@@ -17,9 +17,12 @@ export class SelectUsersComponent {
   @Output() addUser: EventEmitter<IUser> = new EventEmitter<IUser>();
   @Output() removeUser: EventEmitter<IUser> = new EventEmitter<IUser>();
 
-  searchUsername = new FormControl();
+  form = new FormBuilder().group({
+    searchUsername: new FormControl(),
+  });
+  // searchUsername = new FormControl();
   filteredUsers: IUser[] = [];
-  selectedUser: IUser | null = null;
+  selectedUser: IUser = {};
 
   constructor(@Inject(SignOnToken) private signOnService: ISignOnService) {}
 
@@ -29,18 +32,25 @@ export class SelectUsersComponent {
         debounceTime(500),
         distinctUntilChanged(),
         switchMap((username: string) =>
-          this.signOnService
-            .findByUsername(username)
-            .pipe(tap((users: IUser[]) => (this.filteredUsers = users)))
+          this.signOnService.findByUsername(username).pipe(
+            tap((users: IUser[]) => {
+              console.log(users);
+              this.filteredUsers = users;
+            })
+          )
         )
       )
       .subscribe();
   }
 
+  get searchUsername() {
+    return this.form.get('searchUsername') as FormControl;
+  }
+
   addUserToForm() {
     this.addUser.emit(this.selectedUser ?? {});
     this.filteredUsers = [];
-    this.selectedUser = null;
+    this.selectedUser = {};
     this.searchUsername.setValue(null);
   }
 
